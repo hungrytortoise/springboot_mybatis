@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bojoy.dataservice.mapper.custom.SourceDataDao">
+    <sql id="BASE_TABLE">
+    t_user
+  </sql>
+
+    <sql id="BASE_COLUMN">
+    userId,userName,password,phone
+  </sql>
+
+    <!--parameterType="hashmap" #{key} -->
+    <select id="getEventinfo" parameterType="java.lang.Integer"
+            resultType="com.bojoy.dataservice.entity.sourcedata.EventDomain">
+    select  *from game_event_info where game_id=#{game_id}
+  </select>
+
+    <select id="getPropertyinfo" parameterType="java.lang.String"
+            resultType="com.bojoy.dataservice.entity.sourcedata.PropertyDomain">
+    select  * from event_property_info where event_id=#{event_id}
+  </select>
+
+    <select id="getEventByGameidAndEventname" parameterType="hashmap"
+            resultType="com.bojoy.dataservice.entity.sourcedata.EventDomain">
+  select * from event_info where game_id=#{game_id} and event_name=#{event_name}
+</select>
+
+
+    <insert id="addEvent" parameterType="hashmap">
+        insert into event_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,event_id,event_name,event_second_name,event_is_show,event_remark_content,event_index
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{game_id},#{event_id},#{event_name},#{event_second_name},#{event_is_show},#{event_remark_content},#{event_index}
+        </trim>
+
+    </insert>
+
+
+    <select id="getGroupByGameidAndGroupName" parameterType="hashmap" resultType="java.lang.Integer">
+
+    select count(1) from game_event_info where game_id=#{game_id} and group_name=#{group_name}
+  </select>
+
+    <select id="getGroupByGameidAndGroupId" parameterType="hashmap" resultType="java.lang.Integer">
+
+    select count(1) from group_info where game_id=#{game_id} and group_id=#{group_id}
+  </select>
+    <select id="getPropertyByEventIdandPropertyName" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1) from property_info where property_name=#{property_name}
+</select>
+
+    <select id="getPropertyByNameandGameId" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1) from property_info where property_name=#{property_name} and game_id=#{game_id}
+</select>
+
+    <insert id="addGroup" parameterType="hashmap">
+
+        insert into group_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,group_id,group_name,group_second_name,group_index
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{game_id},#{group_id},#{group_name},#{group_second_name},#{group_index}
+        </trim>
+    </insert>
+
+
+    <!--根据groupid更新-->
+    <update id="updateGroup" parameterType="hashmap">
+        update group_info
+        <set>
+            <if test="group_name!=null">group_name=#{group_name},</if>
+            <if test="group_index!=null">group_index=#{group_index},</if>
+            <if test="group_second_name!=null">group_second_name=#{group_second_name},</if>
+        </set>
+        where game_id=#{game_id} and group_id=#{group_id}
+
+    </update>
+
+    <delete id="deleGroup" parameterType="hashmap">
+
+delete from group_info where game_id=#{game_id} and group_id=#{group_id}
+
+    </delete>
+
+    <insert id="addGame" parameterType="hashmap">
+
+        insert into game_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,name,hdfs_path,remark_content,game_index
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{game_id},#{name},#{hdfs_path},#{remark_content},#{game_index}
+        </trim>
+
+    </insert>
+
+    <select id="getGameInfoByIdOrName" parameterType="hashmap"
+            resultType="com.bojoy.dataservice.entity.sourcedata.GameDomain">
+
+        select *from game_info
+        where game_id=#{game_id} or name=#{name}
+
+
+    </select>
+
+    <delete id="deleGame" parameterType="hashmap">
+
+
+        delete from game_info where game_id=#{game_id} and name=#{name}
+    </delete>
+
+    <update id="updateGame" parameterType="hashmap">
+        update game_info
+        <set>
+            <if test="name!=null">name=#{name},</if>
+            <if test="hdfs_path!=null">hdfs_path=#{hdfs_path},</if>
+            <if test="remark_content!=null">remark_content=#{remark_content},</if>
+            <if test="game_index!=null">game_index=#{game_index},</if>
+        </set>
+        where game_id=#{game_id}
+
+
+    </update>
+
+
+    <update id="updateProperty" parameterType="hashmap">
+        update property_info
+        <set>
+            <if test="property_second_name!=null">property_second_name=#{property_second_name},</if>
+            <if test="property_data_type!=null">property_data_type=#{property_data_type},</if>
+            <if test="property_is_show!=null">property_is_show=#{property_is_show},</if>
+            <if test="property_type!=null">property_type=#{property_type},</if>
+
+        </set>
+        where id=#{id} and game_id=#{game_id}
+
+
+    </update>
+    <update id="updateEvent" parameterType="hashmap">
+
+
+        update event_info
+        <set>
+            <if test="event_name!=null">event_name=#{event_name},</if>
+            <if test="event_second_name!=null">event_second_name=#{event_second_name},</if>
+            <if test="event_is_show!=null">event_is_show=#{event_is_show},</if>
+            <if test="event_remark_content!=null">event_remark_content=#{event_remark_content},</if>
+            <if test="event_index!=null">event_index=#{event_index},</if>
+        </set>
+        where event_id=#{event_id} and game_id=#{game_id}
+    </update>
+    <delete id="deleEvent" parameterType="hashmap">
+        delete  from event_info where game_id=#{game_id} and event_id=#{event_id}
+
+    </delete>
+
+    <delete id="deleProperty" parameterType="hashmap">
+
+        delete  from  property_info where id=#{id} and game_id=#{game_id}
+    </delete>
+    <!--属性相关-->
+    <select id="getPropertyBygandPropertyName" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1) from property_info where property_name=#{property_name}
+</select>
+
+
+    <insert id="addProperty" parameterType="hashmap">
+
+        insert into property_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,property_name,property_second_name,property_data_type,property_is_show,property_type
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{game_id},#{property_name},#{property_second_name}, #{property_data_type}, #{property_is_show},
+            #{property_type}
+        </trim>
+    </insert>
+
+
+    <select id="getAllGame" resultType="com.bojoy.dataservice.entity.sourcedata.GameDomain">
+
+        select * from game_info
+
+    </select>
+
+
+    <select id="getAllGroup" resultType="com.bojoy.dataservice.entity.sourcedata.GroupDomain">
+
+        select group_info.game_id,game_info.name,group_info.group_name,group_info.group_index
+        from group_info
+        left join
+        game_info
+        on group_info.game_id=game_info.game_id
+
+
+    </select>
+
+    <select id="getAllEvent" resultType="com.bojoy.dataservice.entity.sourcedata.EventDomain">
+        select event_name,event_second_name,event_is_show,event_index,game_info.name,group_info.group_name,game_event_match.remark_content
+        from game_event_match
+        left join
+        game_info
+        on game_event_match.game_id=game_info.game_id
+        left join
+        event_info
+        on event_info.event_id=game_event_match.event_id
+        left join
+        group_info
+        on game_event_match.group_id=group_info.group_id
+
+
+    </select>
+
+
+    <select id="getAllProperty" resultType="com.bojoy.dataservice.entity.sourcedata.PropertyDomain">
+
+        select game_id,id,property_name,property_second_name,property_data_type,property_type,property_is_show from
+        property_info
+    </select>
+
+    <select id="getEventByGameid" parameterType="hashmap" resultType="com.bojoy.dataservice.entity.sourcedata.EventDomain">
+
+      select game_event_match.event_id,event_name,event_second_name,event_is_show,event_index,game_info.name,group_info.group_name,game_event_match.remark_content
+        from game_event_match
+        left join
+        game_info
+        on game_event_match.game_id=game_info.game_id
+        left join
+        event_info
+        on event_info.event_id=game_event_match.event_id
+        left join
+        group_info
+        on game_event_match.group_id=group_info.group_id
+        where game_event_match.game_id=#{game_id}
+
+    </select>
+
+    <select id="getPropertyByEventId" parameterType="hashmap"
+            resultType="com.bojoy.dataservice.entity.sourcedata.EventPropertyDomain">
+
+      select game_event_match.event_id,event_name,event_second_name,event_is_show,name,group_name,game_event_match.remark_content,property_id,property_name,property_second_name,property_data_type,property_is_show,property_type
+      from game_event_match
+    left join
+    game_info
+    on  game_info.game_id=game_event_match.game_id
+    left join
+    group_info
+    on  game_event_match.group_id=group_info.group_id
+    left join
+    event_info
+    on game_event_match.event_id=event_info.event_id
+    left join (
+    select event_id,property_id,property_name,property_second_name,property_data_type,property_is_show,property_type
+    from event_property_match
+    left join property_info
+    on event_property_match.property_id=property_info.id
+    where event_id=#{event_id}         ) as table_b
+    on event_info.event_id=table_b.event_id
+    where  game_event_match.event_id=#{event_id}
+
+
+    </select>
+    <!--批量更新-->
+    <update id="updateEPinfoByEventId" parameterType="list">
+        insert into
+        event_property_match
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,event_id,property_id
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.game_id},#{item.event_id},#{item.property_id})
+        </foreach>
+
+    </update>
+    <delete id="deleEPinfoByEventId" parameterType="hashmap">
+
+        delete  from event_property_match where event_id=#{event_id}
+
+    </delete>
+    <update id="updateEventInfo" parameterType="hashmap">
+
+        update game_event_match
+        <set>
+
+            <if test="showindex!=null">showindex=#{showindex},</if>
+            <if test="isshow!=null">isshow=#{isshow},</if>
+            <if test="group_id!=null">group_id=#{group_id},</if>
+            <if test="remark_content!=null">remark_content=#{remark_content},</if>
+
+        </set>
+        where game_id=#{game_id} and event_id=#{event_id}
+
+
+    </update>
+
+
+    <insert id="addUserProperty" parameterType="hashmap">
+
+        insert into user_property_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,property_name,property_second_name,property_data_type,property_is_show,property_type
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{game_id},#{property_name},#{property_second_name}, #{property_data_type}, #{property_is_show},
+            #{property_type}
+        </trim>
+
+    </insert>
+    <delete id="deleUserProperty" parameterType="hashmap">
+      delete  from   user_property_info where id=#{id} and game_id=#{game_id}
+    </delete>
+    <select id="getUserProperty" parameterType="string" resultType="com.bojoy.dataservice.entity.sourcedata.PropertyDomain">
+        select *from user_property_info where game_id=#{game_id}
+    </select>
+    <!--##########################################-->
+    <insert id="insert" parameterType="com.bojoy.dataservice.entity.sourcedata.EventDomain">
+        INSERT INTO
+        <include refid="BASE_TABLE"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            userName,password,
+            <if test="phone != null">
+                phone,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{userName, jdbcType=VARCHAR},#{password, jdbcType=VARCHAR},
+            <if test="phone != null">
+                #{phone, jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>

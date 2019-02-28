@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bojoy.dataservice.mapper.primary.PrimaryMapper">
+    <!--1、漏斗相关-->
+    <select id="testfunc" resultType="com.bojoy.dataservice.entity.funnel.FunnelEntity">
+    select *from data_analyze.funnel_step_match limit 10
+    </select>
+    <select id="getFunnelByFunnelName" resultType="com.bojoy.dataservice.entity.funnel.FunnelEntity"
+            parameterType="map">
+    select *from data_analyze.funnel_step_match  where funnel_name=#{funnel_name}
+    </select>
+
+
+    <insert id="addFunnelBatch" parameterType="list">
+        insert into
+        data_analyze.funnel_step_match
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            game_id,funnel_id,funnel_name,max_convert_time,step_id,sort_id
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.game_id},#{item.funnel_id},#{item.funnel_name},#{item.max_convert_time},#{item.step_id},#{item.sort_id})
+        </foreach>
+
+    </insert>
+
+
+    <insert id="addStepsBatch" parameterType="list">
+        insert into
+        data_analyze.funnel_conditions_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            step_id,event_name,event_id,relation,conditions,relevance_field,custom_name
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.step_id},#{item.event_name},#{item.event_id},#{item.relation},#{item.conditions},#{item.relevance_field},#{item.custom_name})
+        </foreach>
+
+    </insert>
+
+</mapper>

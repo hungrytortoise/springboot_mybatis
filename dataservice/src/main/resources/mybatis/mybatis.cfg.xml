@@ -1,0 +1,2 @@
+<!--打印sql到控制台-->
+<setting name="logImpl" value="STDOUT_LOGGING" />
